@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "seed": 20260924,
+  "budget": { "maxCases": 64, "maxCaseMillis": 60000 },
+  "timezones": ["UTC", "America/New_York"],
+  "cases": [
+    {
+      "id": "dst-gap-ny-0230",
+      "category": "dst-gap",
+      "expr": "30 2 * * *",
+      "tz": "America/New_York",
+      "start": "2024-03-09 12:00:00",
+      "valid": true,
+      "expect": { "nextWithinHours": 72, "prevWithinHours": 72 }
+    },
+    {
+      "id": "dst-fold-ny-0130",
+      "category": "dst-fold",
+      "expr": "30 1 * * *",
+      "tz": "America/New_York",
+      "start": "2024-11-02 12:00:00",
+      "valid": true,
+      "expect": { "nextWithinHours": 48, "prevWithinHours": 48 }
+    },
+    {
+      "id": "leap-day-utc",
+      "category": "leap-day",
+      "expr": "0 0 29 2 *",
+      "tz": "UTC",
+      "start": "2024-01-01 00:00:00",
+      "valid": true,
+      "expect": {
+        "nextExact": "2024-02-29 00:00:00",
+        "prevExact": "2020-02-29 00:00:00"
+      }
+    },
+    {
+      "id": "month-end-L-leap-feb",
+      "category": "month-end",
+      "expr": "0 0 L * *",
+      "tz": "UTC",
+      "start": "2024-02-15 00:00:00",
+      "valid": true,
+      "expect": {
+        "nextExact": "2024-02-29 00:00:00",
+        "prevExact": "2024-01-31 00:00:00"
+      }
+    },
+    {
+      "id": "month-day-31-short-month",
+      "category": "month-end",
+      "expr": "0 0 31 * *",
+      "tz": "UTC",
+      "start": "2024-04-15 00:00:00",
+      "valid": true,
+      "expect": {
+        "nextExact": "2024-05-31 00:00:00",
+        "prevExact": "2024-03-31 00:00:00"
+      }
+    },
+    {
+      "id": "sunday-alias-numeric-7",
+      "category": "sunday-alias",
+      "expr": "0 0 * * 7",
+      "tz": "UTC",
+      "start": "2024-09-20 00:00:00",
+      "valid": true,
+      "expect": {
+        "nextExact": "2024-09-22 00:00:00",
+        "prevExact": "2024-09-15 00:00:00",
+        "nextWeekday": 0
+      }
+    },
+    {
+      "id": "range-step-weekday-hours",
+      "category": "range-step",
+      "expr": "0 9-17/2 * * 1-5",
+      "tz": "UTC",
+      "start": "2024-09-23 10:00:00",
+      "valid": true,
+      "expect": {
+        "nextExact": "2024-09-23 11:00:00",
+        "prevExact": "2024-09-23 09:00:00"
+      }
+    },
+    {
+      "id": "unreachable-monthday-feb30",
+      "category": "unreachable-date",
+      "expr": "0 0 30 2 *",
+      "tz": "UTC",
+      "start": "2024-01-01 00:00:00",
+      "valid": true,
+      "expect": { "nextError": "tried so hard", "prevError": "tried so hard" }
+    },
+    {
+      "id": "unreachable-year-past",
+      "category": "unreachable-date",
+      "expr": "0 0 29 2 * 2023",
+      "tz": "UTC",
+      "start": "2024-01-01 00:00:00",
+      "valid": true,
+      "expect": { "nextError": "unreachable year segment", "prevError": "tried so hard" }
+    },
+    {
+      "id": "illegal-minute-61",
+      "category": "illegal-field",
+      "expr": "61 * * * *",
+      "tz": "UTC",
+      "start": "2024-01-01 00:00:00",
+      "valid": false,
+      "expect": { "dueError": "out of bounds", "nextError": "out of bounds", "prevError": "out of bounds" }
+    },
+    {
+      "id": "illegal-segment-count",
+      "category": "illegal-field",
+      "expr": "not a cron",
+      "tz": "UTC",
+      "start": "2024-01-01 00:00:00",
+      "valid": false,
+      "expect": { "dueError": "5-7 segments", "nextError": "5-7 segments", "prevError": "5-7 segments" }
+    }
+  ],
+  "aliasGroups": [
+    {
+      "id": "sunday-aliases",
+      "tz": "UTC",
+      "start": "2024-09-20 00:00:00",
+      "exprs": ["0 0 * * 0", "0 0 * * 7", "0 0 * * SUN", "0 0 * * sun"]
+    }
+  ]
+}
