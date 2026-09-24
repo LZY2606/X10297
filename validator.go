@@ -123,6 +123,14 @@ func isValidMonthDay(val string, last int, ref time.Time) (valid bool, err error
 		return false, err
 	}
 
+	// W targets a concrete calendar day of a month. A value outside 1-31 can
+	// never match in any month and must be rejected (IsValid/IsDue error
+	// layering), while a value inside 1-31 merely does not match when the
+	// current month is shorter (e.g. "31W" in February).
+	if nval < 1 || nval > 31 {
+		return false, fmt.Errorf("monthday '%s' out of bounds(%d, %d)", val, 1, 31)
+	}
+
 	// W never crosses a month boundary, so a month without the Nth day never matches.
 	if nval > last {
 		return false, nil
@@ -152,6 +160,10 @@ func isValidWeekDay(val string, last int, ref time.Time) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+		// Weekday L (last weekday of month) uses cron weekday numbers 0-7.
+		if nval < 0 || nval > 7 {
+			return false, fmt.Errorf("weekday '%s' out of bounds(%d, %d)", val, 0, 7)
+		}
 
 		for i := 0; i < 7; i++ {
 			day := last - i
@@ -178,7 +190,13 @@ func isValidWeekDay(val string, last int, ref time.Time) (bool, error) {
 		return false, err
 	}
 
-	if day < 0 || day > 7 || nth < 1 || nth > 5 || int(ref.Weekday()) != day {
+	// Static bounds are always invalid (IsValid must reject); ref-dependent
+	// mismatch of the weekday itself stays a plain non-match.
+	if day < 0 || day > 7 || nth < 1 || nth > 5 {
+		return false, fmt.Errorf("weekday '%s' out of bounds(day: %d-%d, nth: %d-%d)", val, 0, 7, 1, 5)
+	}
+
+	if int(ref.Weekday()) != day {
 		return false, nil
 	}
 
